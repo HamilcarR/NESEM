@@ -5,9 +5,11 @@
 
 
 
-class Bus ; 
+class BUS ; 
+class CPU{
 
-
+//structs
+public:
 enum PROCSTATUS  {
 	C = (1 << 0), // carry flag 
 	Z = (1 << 1) , //zero flag
@@ -33,19 +35,56 @@ struct REGISTERS {
 
 };
 
-class CPU{
+
+struct INSTRUCTION{
+	std::string mnemonic ; 
+	uint8_t opcode ; 
+	uint8_t (CPU::*addressing_mode)(void) ; 
+	uint8_t (CPU::*instruction)(void) ; 
+	uint8_t instruction_bytes ; 
+	uint8_t machine_cycles ; 
+	uint8_t additionnal_cycles ; 
+};
+
+
+
+struct REGSTATES{
+	static const uint8_t PROCESSOR_FLAG_POWER_ON = 0x34 ;//IRQ disable flag and Break to true  
+	static const uint8_t PROCESSOR_FLAG_RESET = 0x04 ; //IRQ disable true 
+	static const uint8_t REGISTER_STACK_POWER_ON = 0xFD ; 
+
+
+
+
+};
+
+
+
+
+
+
+
+
 public:
-	CPU(Bus *b){
-		_bus = b ; 
+	CPU(BUS *b){
+		bus = b ;
+		ticks = 0 ; 
+		fill_table();
 	}
 	virtual ~CPU(){}
 	void update_flag(PROCSTATUS P , bool expr ) ; 
-	bool get_flag(PROCSTATUS P) ; 
+	uint8_t get_flag(PROCSTATUS P) ; 
 	uint8_t read(uint16_t address);
 	void write(uint16_t address , uint8_t value) ;
-
-
-
+	void get() ; //reads opcode from opcode list
+	void fill_table(); 
+	//initialize the states of registers and memory  after a power up 
+	void power_on();
+	//initialize the states of registers and memory after a regular reset
+	void soft_reset();
+	void power_off(); 
+	const REGISTERS getRegisters(){return registers ;} 
+	const BUS*      getBus(){return bus ; }
 
 //addressing modes
 	uint8_t ZP(); //zero page
@@ -69,15 +108,18 @@ public:
 	void IRQ() ; //maskable  
 	void NMI() ; //non maskable interrupts
 	void RESET(); //reset
-	
+
+//address pointers and stored data
 	uint16_t rel_addr; 
 	uint16_t abs_addr;
-	uint8_t value ; 
-	unsigned int ticks; 
-
+	uint8_t data ; 
+	unsigned int ticks ; 
+	uint8_t current_opcode ; 
+//instructions matrix 
+	std::vector<INSTRUCTION> opcodes_table ; 	
 
 private:
-	Bus* _bus ;
+	BUS* bus ;
 	REGISTERS registers ; 
 
 
@@ -141,7 +183,7 @@ uint8_t TSX();// transfer stack pointer to index x
 uint8_t TXA();// transfer index x to accumulator
 uint8_t TXS();// transfer index x to stack register
 uint8_t TYA();// transfer index y to accumulator
- 
+uint8_t ILL();//illegal opcode 
 
 
 

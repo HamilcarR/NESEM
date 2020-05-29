@@ -4,12 +4,12 @@
 #include "Constants.h"
 
 
-
+class BUS ;
 
 class RAM{
 
 public:
-	RAM(Bus* bus){
+	RAM(BUS* bus){
 		_bus = bus ; 
 		pointer = start_address ; 
 
@@ -21,7 +21,7 @@ private:
 
 	static const uint16_t start_address = 0x0200 ; 
 	static const uint16_t end_address = 0x0800 ; 
-	Bus* _bus ; 
+	BUS* _bus ; 
 	uint16_t pointer;
 
 
