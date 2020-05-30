@@ -82,19 +82,43 @@ NESROM data(const char* file){
 namespace ASSEMBLY{
 
 	
+uint8_t getIndex(char c){
+	for(int i = 0 ; i <= 0xF ; i++)
+		if(UTILITY::table[i] == c)
+			return i ; 
+	return 0 ; 
+}
 
 
-
+//return hex equivalent of string characters
+std::vector<uint8_t> translate(std::string content){
+	std::vector<uint8_t> result ;
+	for(std::size_t i = 0 ; i < content.size() ; i+=2){
+		uint8_t high = getIndex(content[i]) ; 
+		uint8_t low = getIndex(content[i+1]) ; 
+		uint8_t value = (high << 4) | low ;
+		result.push_back(value); 
+	}
+	return result ;
+}
 
 
 
 std::vector<uint8_t> data(const char* file){
 
-	std::ifstream input(file , std::ios::binary) ;  	
-	std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(input) , {});
-	return buffer ; 
-
-
+	std::ifstream input(file) ;
+	if(input){
+		std::string content ; 
+		char c ;
+		while(input >> c) 
+			content += c ;	
+		return translate(content) ; 
+	}
+	else{
+		std::cerr << file << " not found" ; 
+		return std::vector<uint8_t>() ; 
+	}
+	
 
 
 }
