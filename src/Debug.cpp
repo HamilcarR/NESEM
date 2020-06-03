@@ -5,15 +5,16 @@
 
 using namespace UTILITY ; 
 
-void CPUDEBUG::print_registers() const {
+std::string CPUDEBUG::print_registers() const {
+	std::ostringstream oss(std::ostringstream::out) ; 
 	const CPU::REGISTERS registers = cpu->getRegisters(); 
-	std::cout << "Registers--------------" << std::endl; 
-	std::cout << "A: " << format(registers.A) << "\n"; 
-	std::cout << "X: " << format(registers.X) << "\n"; 
-	std::cout << "Y: " << format(registers.Y) << "\n";
-	std::cout << "SP: " << format(registers.SP) << "\n";
-	std::cout << "PC: " << format(registers.PC) << "\n"; 
-	std::cout << "FLAGS--------------" << std::endl; 
+	oss << "Registers--------------" << "\n"; 
+	oss << "A: " << format(registers.A) << "\n"; 
+	oss << "X: " << format(registers.X) << "\n"; 
+	oss << "Y: " << format(registers.Y) << "\n";
+	oss << "SP: " << format(registers.SP) << "\n";
+	oss << "PC: " << format(registers.PC) << "\n";  
+	oss << "FLAGS--------------" << "\n"; 
 	int N , V , U , B , D , I , Z , C ; 
 	N = cpu->get_flag(CPU::N) ; 
 	V = cpu->get_flag(CPU::V) ; 
@@ -23,18 +24,21 @@ void CPUDEBUG::print_registers() const {
 	I = cpu->get_flag(CPU::I) ; 
 	Z = cpu->get_flag(CPU::Z) ; 
 	C = cpu->get_flag(CPU::C) ; 
-	std::cout << "N V U B D I Z C" << "\n";
-	std::cout << N << " " << V << " " << U << " " << B << " " << D << " " << I << " " << Z << " " << C << "\n" ; 
+	oss << "N V U B D I Z C" << "\n";
+	oss << N << " " << V << " " << U << " " << B << " " << D << " " << I << " " << Z << " " << C << std::endl ; 
 
+	return oss.str();
 
 }
 
-void CPUDEBUG::current_instruction() const {
+std::string CPUDEBUG::current_instruction() const {
+	std::ostringstream oss(std::ostringstream::out); 
 	const CPU::INSTRUCTION instruction = cpu->opcodes_table[cpu->current_opcode] ; 	
-	std::cout << "INSTRUCTION--------------" << std::endl; 
-	std::cout << "Op: " << instruction.mnemonic << "  " << format(instruction.opcode) << "\n" ; 
-	std::cout << "Data: " << format(cpu->data) << "\n" ; 
-	std::cout << "Address absolute: " << format(cpu->abs_addr) << "\n" ; 
+	oss << "INSTRUCTION--------------" << "\n"; 
+	oss << "Op: " << instruction.mnemonic << "  " << format(instruction.opcode) << "\n" ; 
+	oss << "Data: " << format(cpu->data) << "\n" ; 
+	oss << "Address absolute: " << format(cpu->abs_addr) << std::endl ;
+	return oss.str();
 
 
 }
@@ -42,49 +46,69 @@ void CPUDEBUG::current_instruction() const {
 
 
 
+std::string CPUDEBUG::print_zeropage() const{
+	std::ostringstream oss(std::ostringstream::out);
+	uint16_t addr = 0x0000 ; 
+	uint8_t value = 0 ;
+	for(uint16_t k = 0x0000 ; k <= 0x00F0 ; k+=0x0010){
+		uint8_t i = k & 0x00FF ; 
+		if(k > 0x00F0) 
+			break;
+		addr = i ; 
+		oss << format(addr) << ":     " ; 
+		for(uint8_t j = 0 ; j < 0x0F ; j++){
+			uint8_t z = i | j ; 
+			value = cpu->getBus()->read(addr | (z & 0x00FF)) ; 
+			oss << format(value) << "   " ; 
+
+		}
+		oss << "\n" ; 
+
+	}
+
+	oss << std::endl ; 
+	return oss.str() ; 
 
 
 
+}
 
+
+std::string CPUDEBUG::print_memory(uint8_t mempage) const {
+	
+	std::ostringstream oss(std::ostringstream::out);
+	uint16_t temp = (mempage & 0x00FF) << 8 ; 
+	uint16_t addr ; 
+	uint8_t value = 0 ;
+	for(uint16_t k = 0x0000 ; k <= 0x00F0 ; k+=0x10){
+		uint8_t i = k & 0x00FF ; 
+		if(k >0x00F0)
+			break;
+		addr = temp | i ; 
+		oss << format(addr) << ":     " ; 
+		for(uint8_t j = 0 ; j <= 0x0F ; j++){
+			uint8_t z = i | j ; 
+			value = cpu->getBus()->read(addr | (z & 0x00FF)) ; 
+			oss << format(value) << "   " ; 
+
+		}
+		oss << "\n" ; 
+
+	}
+
+	oss << std::endl ; 
+	return oss.str() ; 
+
+
+}
 
 
 
 
 
 void CPUDEBUG::loop() const {
-	char *c = new char[1]  ;
-	*c = ' ' ; 
-	//add thread
-	auto keyboard_input=[](char* c) { while(*c !='q') std::cin >> c ; } ; 
 	cpu->power_on(); 
-	auto a = std::async(std::launch::async , keyboard_input , c ) ; 
-
-	while(*c != 'q'){
-
-		switch (*c) {
-			case 'r' :
-				print_registers(); 
-				std::cout << "clock : " << cpu->ticks << "\n" ; 
-				*c = ' ';
-			break ; 
-
-			case 'i' :
-				current_instruction();
-				std::cout << "clock : " << cpu->ticks << "\n" ;
-				*c = ' '; 
-			break;
-
-			case 'c' :
-				cpu->clock(); 
-				*c = ' ';
-			break;
-	  }
-	do{
-	  cpu->clock(); 
-	}
-	while(cpu->ticks != 0) ;   
-
-	}
+	window->loop(this); 
 
 
 

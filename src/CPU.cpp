@@ -220,10 +220,10 @@ void CPU::clock(){
 		current_opcode = opcode ; 
 		INSTRUCTION instruction = opcodes_table[opcode] ;
 		uint8_t cycles = instruction.machine_cycles ; 
-		uint8_t addressing_cycles = (this->*instruction.addressing_mode)(); 	
+		uint8_t addressing_cycles = (this->*instruction.addressing_mode)(); 		
 		uint8_t instruction_cycles = (this->*instruction.instruction)(); 
 		ticks+= cycles + (addressing_cycles & instruction_cycles) ;
-		
+
 	}
 	ticks-- ;
 
@@ -446,7 +446,7 @@ uint8_t CPU::BPL() {
 }
 	
 uint8_t CPU::BRK() {
-	get() ; 
+	get() ; 	
 	bus->write_stack(registers.SP-- , registers.PC & 0xFF) ; 
 	bus->write_stack(registers.SP-- , (registers.PC >> 8) & 0xFF) ; 
 	bus->write_stack(registers.SP-- , registers.P) ;

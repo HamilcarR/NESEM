@@ -68,7 +68,8 @@ struct REGSTATES{
 public:
 	CPU(BUS *b){
 		bus = b ;
-		ticks = 0 ; 
+		ticks = 0 ;
+		current_opcode = 0x00 ; 
 		fill_table();
 	}
 	virtual ~CPU(){}
@@ -83,8 +84,8 @@ public:
 	//initialize the states of registers and memory after a regular reset
 	void soft_reset();
 	void power_off(); 
-	const REGISTERS getRegisters(){return registers ;} 
-	const BUS*      getBus(){return bus ; }
+	const REGISTERS getRegisters() const {return registers ;} 
+	const BUS*      getBus()const {return bus ; }
 
 //addressing modes
 	uint8_t ZP(); //zero page
@@ -114,7 +115,7 @@ public:
 	uint16_t abs_addr;
 	uint8_t data ; 
 	unsigned int ticks ; 
-	uint8_t current_opcode ; 
+	uint8_t current_opcode = 0 ; 
 //instructions matrix 
 	std::vector<INSTRUCTION> opcodes_table ; 	
 
