@@ -73,6 +73,10 @@ void Window::loop(const Debug *debug){
 	const CPUDEBUG *cdebug = static_cast<const CPUDEBUG*>(debug) ; 
 	std::ostringstream oss(std::ostringstream::out) ; 
 	while(isOpen()){
+		while(static_cast<const CPUDEBUG*>(debug)->cpu->ticks > 0) 
+		static_cast<const CPUDEBUG*>(debug)->cpu->clock(); 
+
+
 		clear();
 		sf::Event event ; 
 		while(pollEvent(event)){
@@ -109,9 +113,6 @@ void Window::loop(const Debug *debug){
 		draw(text);	
 
 		display();
-	while(static_cast<const CPUDEBUG*>(debug)->cpu->ticks > 0) 
-		static_cast<const CPUDEBUG*>(debug)->cpu->clock(); 
-
 
 	}
 

@@ -4,12 +4,13 @@
 
 
 
-static void registers_reset(CPU::REGISTERS &registers){
+void CPU::registers_reset(){
 	registers.A = 0 ; 
 	registers.X = 0 ; 
 	registers.Y = 0 ; 
 	registers.P = 0x24 ;
 	registers.SP = BUS::STACK::END & 0xFF; 
+	registers.PC = bus->get_reset_vector(); 
 }
 
 
@@ -18,7 +19,7 @@ static void registers_reset(CPU::REGISTERS &registers){
 
 /* https://wiki.nesdev.com/w/index.php/CPU_power_up_state */
 void CPU::power_on(){
-	registers_reset(registers) ;
+	registers_reset() ;
 	soft_reset();  
 
 
@@ -39,9 +40,9 @@ void CPU::power_off(){
 
 void CPU::update_flag(PROCSTATUS P , bool expr){
 	if(expr)
-		registers.P = registers.P | P ; 
+		registers.P |=  P ; 
 	else
-		registers.P = registers.P & ~P ; 
+		registers.P &=  ~P ; 
 
 
 }
@@ -99,7 +100,7 @@ uint8_t CPU::ZPY(){
 uint8_t CPU::ABS(){
 	uint8_t low = read(registers.PC++) ; 
 	uint8_t high = read(registers.PC++) ; 
-	abs_addr = (high << 8) | low ; 
+	abs_addr = ((high & 0x00FF) << 8) | low ; 
 	return 0 ; 
 }
 
@@ -321,7 +322,7 @@ uint8_t CPU::AND() {
 
 uint8_t CPU::ASL() { 
 	get();
-	if(opcodes_table[current_opcode].addressing_mode == &CPU::IMP){
+	if(opcodes_table[current_opcode].addressing_mode == &CPU::ACC){
 		uint8_t carry = registers.A & 0x80 ; 
 		update_flag(C , carry != 0) ;
 		registers.A = registers.A << 1 ; 	
@@ -531,6 +532,7 @@ uint8_t CPU::CPX() {
 }
 
 uint8_t CPU::CPY() {
+	get();
 	uint8_t result = registers.Y - data ; 
 	update_flag(C , registers.Y >= data) ; 
 	update_flag(Z , registers.Y == data) ; 
@@ -769,12 +771,11 @@ uint8_t CPU::RTI() {
 
 uint8_t CPU::RTS() {
 	get();
+	registers.SP++ ; 
 	uint8_t PCH = bus->read_stack(registers.SP++); 
-	uint8_t PCL = bus->read_stack(registers.SP++); 
-	uint16_t PC = PCH ; 
-	PC = (PC << 8) | PCL ; 
-	PC-- ; 
-	registers.PC = PC ; 
+	uint8_t PCL = bus->read_stack(registers.SP); 
+	uint16_t PC = (PCH & 0x00FF) << 8 | PCL ; 
+	registers.PC = PC + 1  ; 
 	return 0 ; 
 }
 
@@ -954,7 +955,7 @@ void CPU::fill_table(){
 		
 /*************************     0x20     *************************/
 
-		{"JSR" ,0x20 , &CPU::ABS , &CPU::ABS , 3 , 6 , 0} ,
+		{"JSR" ,0x20 , &CPU::ABS , &CPU::JSR , 3 , 6 , 0} ,
 		{"AND" ,0x21 , &CPU::INDX , &CPU::AND , 2 , 6 , 0} ,
 		{"???" ,0x22 , &CPU::IMP , &CPU::ILL , 1 , 2 , 0} ,
 		{"???" ,0x23 , &CPU::INDX , &CPU::ILL , 2 , 8 , 0} ,

@@ -37,7 +37,8 @@ std::string CPUDEBUG::current_instruction() const {
 	oss << "INSTRUCTION--------------" << "\n"; 
 	oss << "Op: " << instruction.mnemonic << "  " << format(instruction.opcode) << "\n" ; 
 	oss << "Data: " << format(cpu->data) << "\n" ; 
-	oss << "Address absolute: " << format(cpu->abs_addr) << std::endl ;
+	oss << "Address absolute: " << format(cpu->abs_addr) << "\n" ;
+	oss << "Address relative: " << format(cpu->rel_addr) << std::endl; 
 	return oss.str();
 
 

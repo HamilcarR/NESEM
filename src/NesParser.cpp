@@ -99,6 +99,10 @@ std::vector<uint8_t> translate(std::string content){
 		uint8_t value = (high << 4) | low ;
 		result.push_back(value); 
 	}
+	for(uint8_t i : result)
+		std::cout << UTILITY::format(i) << "  " ;
+	std::cout << std::endl;
+	
 	return result ;
 }
 

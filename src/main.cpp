@@ -10,11 +10,8 @@ using namespace std;
 
 int main(int argc , char** argv){
 	
-//	NESROM rom = NESPARSER::data(argv[1]);	
+//	NESPARSER::NESROM rom = NESPARSER::data(argv[1]);	
 	auto assembly = ASSEMBLY::data(argv[1]); 
-	for(uint8_t i : assembly)
-		std::cout << UTILITY::format(i) << "  " ;
-	std::cout << std::endl;
 	Window window = Window();
 	BUS bus= BUS();
 	bus.init_rom(assembly) ; 

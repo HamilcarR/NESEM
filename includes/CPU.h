@@ -69,7 +69,9 @@ public:
 	CPU(BUS *b){
 		bus = b ;
 		ticks = 0 ;
-		current_opcode = 0x00 ; 
+		current_opcode = 0x00 ;
+		rel_addr = 0x00 ; 
+		abs_addr = 0x0000 ; 
 		fill_table();
 	}
 	virtual ~CPU(){}
@@ -122,6 +124,25 @@ public:
 private:
 	BUS* bus ;
 	REGISTERS registers ; 
+
+
+
+
+
+
+private:
+	void registers_reset() ; 
+
+
+
+
+
+
+
+
+
+
+
 
 
 

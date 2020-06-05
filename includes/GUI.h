@@ -25,7 +25,7 @@ public:
 	{
 		width = 900 ; 
 		height = 600 ;
-		memory_page = 0x00; 
+		memory_page = 0x80; 
 		initFont();
 		setupFont();
 		initScreen();
@@ -35,7 +35,7 @@ public:
 	Window(int w , int h ):sf::RenderWindow(sf::VideoMode(w , h) , " ")  
 	{
 		width = w ; 
-		memory_page = 0x00; 
+		memory_page = 0x80; 
 		height = h ; 
 		initFont();
 		setupFont();
