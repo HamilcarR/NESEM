@@ -10,7 +10,8 @@ void CPU::registers_reset(){
 	registers.Y = 0 ; 
 	registers.P = 0x24 ;
 	registers.SP = BUS::STACK::END & 0xFF; 
-	registers.PC = bus->get_reset_vector(); 
+	//registers.PC = bus->get_reset_vector(); 
+	registers.PC = 0xC000 ; 
 }
 
 
@@ -20,7 +21,7 @@ void CPU::registers_reset(){
 /* https://wiki.nesdev.com/w/index.php/CPU_power_up_state */
 void CPU::power_on(){
 	registers_reset() ;
-	soft_reset();  
+	//soft_reset();  
 
 
 
@@ -174,11 +175,10 @@ uint8_t CPU::IMM(){
 
 
 uint8_t CPU::REL(){
-	rel_addr = read(registers.PC);
-	registers.PC++;
+	rel_addr = read(registers.PC++);
 	bool negative = (rel_addr & 0x80) ;
 	if(negative)
-		rel_addr = rel_addr | 0xFF00 ; // jumping backwards 
+		rel_addr |= 0xFF00 ; // jumping backwards using wrap around 
 	return 0 ; 
 
 }
@@ -223,8 +223,11 @@ void CPU::clock(){
 		uint8_t cycles = instruction.machine_cycles ; 
 		uint8_t addressing_cycles = (this->*instruction.addressing_mode)(); 		
 		uint8_t instruction_cycles = (this->*instruction.instruction)(); 
-		ticks+= cycles + (addressing_cycles & instruction_cycles) ;
-
+		ticks+= cycles + (addressing_cycles & instruction_cycles) ;	
+		std::ofstream out("emu.log" , std::ios::app | std::ios::out | std::ios::ate); 
+		out << instruction_count + 1 << "   " << instruction.mnemonic << std::endl; 
+		out.close();
+		instruction_count ++ ; 
 	}
 	ticks-- ;
 
@@ -248,10 +251,11 @@ void CPU::RESET(){
 
 void CPU::IRQ(){
 	uint8_t msb = (registers.PC >> 8) & 0xFF ; 
-	uint8_t lsb = registers.PC & 0xFF ; 
+	uint8_t lsb = registers.PC & 0xFF ;
+	registers.SP-- ; 
 	bus->write_stack(registers.SP-- , msb) ; 
 	bus->write_stack(registers.SP-- , lsb) ;
-	bus->write_stack(registers.SP-- , registers.P) ; 
+	bus->write_stack(registers.SP , registers.P) ; 
 	update_flag(I , true) ;
 	uint8_t lsbPC = bus->read(BUS::IRVECT::IRQ_INTERRUPT_VECTOR_LOW) ; 
 	uint8_t msbPC = bus->read(BUS::IRVECT::IRQ_INTERRUPT_VECTOR_HIGH) ; 
@@ -262,9 +266,10 @@ void CPU::IRQ(){
 void CPU::NMI(){
 	uint8_t msb = (registers.PC >> 8) & 0xFF ; 
 	uint8_t lsb = registers.PC & 0xFF ; 
+	registers.SP-- ; 
 	bus->write_stack(registers.SP-- , msb) ; 
 	bus->write_stack(registers.SP-- , lsb) ;
-	bus->write_stack(registers.SP-- , registers.P) ; 
+	bus->write_stack(registers.SP , registers.P) ; 
 	update_flag(I , true) ;
 	uint8_t lsbPC = bus->read(BUS::IRVECT::NMI_INTERRUPT_VECTOR_LOW) ; 
 	uint8_t msbPC = bus->read(BUS::IRVECT::NMI_INTERRUPT_VECTOR_HIGH) ; 
@@ -447,10 +452,11 @@ uint8_t CPU::BPL() {
 }
 	
 uint8_t CPU::BRK() {
-	get() ; 	
+	get() ; 
+	registers.SP-- ; 
 	bus->write_stack(registers.SP-- , registers.PC & 0xFF) ; 
 	bus->write_stack(registers.SP-- , (registers.PC >> 8) & 0xFF) ; 
-	bus->write_stack(registers.SP-- , registers.P) ;
+	bus->write_stack(registers.SP , registers.P) ;
 	uint8_t ivectorhi = bus->read(BUS::IRVECT::IRQ_INTERRUPT_VECTOR_HIGH) ; 
 	uint8_t ivectorlo = bus->read(BUS::IRVECT::IRQ_INTERRUPT_VECTOR_LOW) ;
 	uint16_t ivec =( (ivectorhi & 0x00FF) << 8) | ivectorlo ; 
@@ -703,14 +709,16 @@ uint8_t CPU::PHP() {
 }
 
 uint8_t CPU::PLA() {
-	registers.A = bus->read_stack(registers.SP++); 
+	registers.SP++ ; 
+	registers.A = bus->read_stack(registers.SP); 
 	update_flag(Z , registers.A == 0x00);
 	update_flag(N , registers.A & 0x80); 
 	return 0 ; 
 }
 
 uint8_t CPU::PLP() {
-	registers.P = bus->read_stack(registers.SP++);
+	registers.SP++;
+	registers.P = bus->read_stack(registers.SP);
 	return 0 ; 
 }
 
@@ -757,9 +765,10 @@ uint8_t CPU::ROR() {
 
 uint8_t CPU::RTI() { 
 	get();
+	registers.SP++ ; 
 	uint8_t flag = bus->read_stack(registers.SP++) ;
 	uint8_t PCH = bus->read_stack(registers.SP++) ; 
-	uint8_t PCL =  bus->read_stack(registers.SP++) ; 
+	uint8_t PCL =  bus->read_stack(registers.SP) ; 
 	registers.P = flag ; 
 	uint16_t PC = PCH ;
 	PC = (PC << 8) | PCL ; 
