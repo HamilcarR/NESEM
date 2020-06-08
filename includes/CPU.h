@@ -68,10 +68,11 @@ struct REGSTATES{
 public:
 	CPU(BUS *b){
 		bus = b ;
-		ticks = 0 ;
+		ticks = 1 ;
 		current_opcode = 0x00 ;
 		rel_addr = 0x00 ; 
-		abs_addr = 0x0000 ; 
+		abs_addr = 0x0000 ;
+		instruction_count = 0x0000;
 		fill_table();
 	}
 	virtual ~CPU(){}
@@ -120,7 +121,8 @@ public:
 	uint8_t current_opcode = 0 ; 
 //instructions matrix 
 	std::vector<INSTRUCTION> opcodes_table ; 	
-
+//instructions count (debug) 	
+	uint16_t instruction_count ; 
 private:
 	BUS* bus ;
 	REGISTERS registers ; 

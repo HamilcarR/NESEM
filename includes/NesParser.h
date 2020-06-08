@@ -39,13 +39,18 @@ NESROM  data(const char* file);
 //reads an assembly binary file
 namespace ASSEMBLY {
 
-std::vector<uint8_t> data(const char* file) ;
-
+	std::vector<uint8_t> data(const char* file) ;
+	
 
 }
 
 
+namespace BINARY {
 
+	std::vector<uint8_t> data(const char* file); 
+
+
+}
 
 
 

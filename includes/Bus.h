@@ -90,7 +90,7 @@ struct MIRROR{
 
 
 
-//PPU registers , mirrored
+//PPU registers , mirrored and can be modified by the CPU
 struct PPUREG{
 	static const uint16_t BEGIN = 0x2000 ; 
 	static const uint16_t END   = 0x2007 ;
@@ -133,7 +133,7 @@ struct PPUREGMIRROR{
 	void write(uint16_t address , uint8_t value) ; //write value to any memory address 
 	void write_stack(uint8_t sp , uint8_t value); //write only to stack , provide only the stack pointer addr
 	uint8_t read_stack(uint8_t sp) ; 	//read the value pointing by the stack pointer 
-	void init_rom(std::vector<uint8_t> buffer) ; //rom initialisation 
+	void init_rom(std::vector<uint8_t> buffer , uint16_t address = PRGROM::BEGIN) ; //rom initialisation 
 	uint16_t get_reset_vector(); //reads reset vector values on memory
 
 
@@ -160,21 +160,73 @@ private:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 //VRAM 
 class PPUBUS : public BUSBASIC {
 public:
+
+
+struct PATTERNTABLES {
+	static const uint16_t P_TABLE_0_BEGIN = 0x0000 ; 
+	static const uint16_t P_TABLE_0_END = 0x0FFF ; 
+
+	static const uint16_t P_TABLE_1_BEGIN = 0x1000 ; 
+	static const uint16_t P_TABLE_1_END = 0x1FFF ; 
+};
+
+struct NAMETABLES {
+	static const uint16_t N_TABLE_0_BEGIN = 0x2000 ; //name tables
+	static const uint16_t N_TABLE_0_END = 0x23BF ; 
+
+	static const uint16_t A_TABLE_0_BEGIN = 0x23C0 ; //attribute tables
+	static const uint16_t A_TABLE_0_END = 0x23FF ; 
+
+	static const uint16_t N_TABLE_1_BEGIN = 0x2400 ; 
+	static const uint16_t N_TABLE_1_END = 0x27BF ; 
+
+	static const uint16_t A_TABLE_1_BEGIN = 0x27C0 ; 
+	static const uint16_t A_TABLE_1_END = 0x27FF ; 
+
+	static const uint16_t N_TABLE_2_BEGIN = 0x2800 ; 
+	static const uint16_t N_TABLE_2_END = 0x2BBF ; 
+
+	static const uint16_t A_TABLE_2_BEGIN = 0x2BC0 ; 
+	static const uint16_t A_TABLE_2_END = 0x2BFF ; 
+
+	static const uint16_t N_TABLE_3_BEGIN = 0x2C00 ; 
+	static const uint16_t N_TABLE_3_END = 0x2FBF ; 
+
+	static const uint16_t A_TABLE_3_BEGIN = 0x2FC0 ; 
+	static const uint16_t A_TABLE_3_END = 0x2FFF ;
+
+};
+
+struct PALETTES {
+	static const uint16_t IMG_PALETTE_BEGIN = 0x3F00 ; 
+	static const uint16_t IMG_PALETTE_END = 0x3F0F ; 
+	
+	static const uint16_t SPRITE_PALETTE_BEGIN = 0x3F10 ; 
+	static const uint16_t SPRITE_PALETTE_END = 0x3F1F ; 
+
+};
+
+struct MIRRORS{
+	static const uint16_t NT_BEGIN = 0x3000 ; // nametables mirror range
+	static const uint16_t NT_END = 0x3EFF ; 
+
+	static const uint16_t PT_BEGIN = 0x3F20 ; //Palettes mirror range
+	static const uint16_t PT_END = 0x3FFF ; 
+
+	static const uint16_t WRAP_BEGIN = 0x4000 ; //PPU is supposed to have only 16kb of memory.
+	static const uint16_t WRAP_END = 0xFFFF ; //Addresses beyond 0x3FFF are wrapped around on the hardware memory
+						 //so we extend memory to simuate that behaviour. 
+						 //Everything beyond 0x4000 is supposed to be wrapped around from 
+						 //0x0000
+};
+
+
+
+
+
 	PPUBUS(){}
 	virtual ~PPUBUS(){
 		for(std::size_t i = 0 ; i < bus_size ; i++)
@@ -187,7 +239,7 @@ public:
 
 
 private:
-	static const std::size_t bus_size = 16 * 1024 ; 
+	static const std::size_t bus_size = 64 * 1024 ; 
 	std::array<uint8_t , bus_size> _bus ; //PPU's own memory
 
 
