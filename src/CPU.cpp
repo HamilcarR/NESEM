@@ -442,7 +442,7 @@ uint8_t CPU::BNE() {
 uint8_t CPU::BPL() {
 	get();
 	uint8_t negative = get_flag(N); 
-	if(negative == 0x00 ){
+	if(!negative ){
 		ticks++ ; 
 		uint16_t oldaddr = abs_addr ; 
 		registers.PC += rel_addr ; 
@@ -884,8 +884,6 @@ uint8_t CPU::TXA() {
 
 uint8_t CPU::TXS() {
 	registers.SP = registers.X ; 
-	update_flag(N , registers.SP & 0x80); 
-	update_flag(Z , registers.SP == 0x00) ; 
 	return 0 ; 
 
 }
