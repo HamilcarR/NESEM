@@ -9,7 +9,7 @@ void CPU::registers_reset(){
 	registers.X = 0 ; 
 	registers.Y = 0 ; 
 	registers.P = 0x24 ;
-	registers.SP = BUS::STACK::END & 0xFF; 
+	registers.SP = BUS::STACK::END & 0xFD; // put to FF or FD ? TODO  
 	//registers.PC = bus->get_reset_vector(); 
 	registers.PC = 0xC000 ; 
 }
@@ -224,9 +224,13 @@ void CPU::clock(){
 		uint8_t addressing_cycles = (this->*instruction.addressing_mode)(); 		
 		uint8_t instruction_cycles = (this->*instruction.instruction)(); 
 		ticks+= cycles + (addressing_cycles & instruction_cycles) ;	
+#ifdef DEBUG
 		std::ofstream out("emu.log" , std::ios::app | std::ios::out | std::ios::ate); 
-		out << instruction_count + 1 << "   " << instruction.mnemonic << std::endl; 
+		out << instruction_count + 1 << "   " << instruction.mnemonic << "  " << UTILITY::format(instruction.opcode);
+		out << "   		A:" <<UTILITY::format(registers.A) << " ; X:" << UTILITY::format(registers.X) << " ; Y:" ; 
+		out << UTILITY::format(registers.Y) << " ; P:" << UTILITY::format(registers.P) << " ; SP:" << UTILITY::format(registers.SP) << std::endl; 
 		out.close();
+#endif
 		instruction_count ++ ; 
 	}
 	ticks-- ;
@@ -300,7 +304,7 @@ uint8_t CPU::ADC() {
 	get(); 
 	uint8_t datasign = data & 0x80 ; 
 	uint8_t carryin = get_flag(C) ; 	
-	uint8_t accsign = ( registers.A + carryin ) & 0x80 ; 
+	uint8_t accsign = ( registers.A ) & 0x80 ; 
 	uint16_t sum = data + registers.A + carryin;
 	uint8_t carryout = (sum & 0x0100)  > 0 ? 1 : 0 ;
 	registers.A = data + registers.A + carryin ; 
@@ -578,9 +582,10 @@ uint8_t CPU::DEY() {
 
 uint8_t CPU::EOR() {
 	get();  
-	uint8_t XOR = registers.A ^ data ; 
+	uint8_t XOR = registers.A ^ data ;
+	registers.A = XOR ; 
 	update_flag(Z , XOR == 0x00);
-	update_flag(N , XOR && 0x80) ; 
+	update_flag(N , XOR & 0x80) ; 
 	return 1 ; 
 
 }
@@ -792,17 +797,17 @@ uint8_t CPU::RTS() {
 uint8_t CPU::SBC() {
 	get() ; 
 	uint8_t datasign = data & 0x80 ; 
-	uint8_t carryin = get_flag(C) ; 	
-	uint8_t accsign = ( registers.A + carryin - 1 ) & 0x80 ; 
-	uint16_t sub =  registers.A - data - 1 +  carryin;
-	uint8_t carryout = (sub & 0x0100) > 0 ? 1 : 0 ;
+	uint8_t carryin  = get_flag(C) ; 	
+	uint8_t accsign = (registers.A) & 0x80 ; 
+	uint8_t sub =  registers.A - data - (1 - carryin);
 	registers.A = sub ; 
-	update_flag(C , carryout); 
+/*check if overflowing ie -X -Y > 0 or +X +Y < 0 , with (X , Y) >= 0 */
+	bool overflow = (datasign && !accsign && (sub & 0x80)) || (!datasign && accsign && !(sub & 0x80)) ; 	
 	update_flag(Z , registers.A == 0) ; 
-/*check if overflowing ie positive + positive = negative or negative + negative = positive*/
-	bool overflow = (datasign == accsign) && ((sub & 0x80) != accsign) ; 
-	update_flag(V , overflow); 
+	update_flag(V , overflow);	
 	update_flag(N , registers.A & 0x80) ; 
+	update_flag(C , !(registers.A & 0x80)); 
+
 	return 1 ; 
 
 

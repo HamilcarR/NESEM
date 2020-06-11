@@ -108,7 +108,7 @@ public:
 //clock 
 	void clock();
 
-//interrupts
+	//interrupts
 	void IRQ() ; //maskable  
 	void NMI() ; //non maskable interrupts
 	void RESET(); //reset
