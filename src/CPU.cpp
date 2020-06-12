@@ -10,8 +10,11 @@ void CPU::registers_reset(){
 	registers.Y = 0 ; 
 	registers.P = 0x24 ;
 	registers.SP = BUS::STACK::END & 0xFD; // put to FF or FD ? TODO  
-	//registers.PC = bus->get_reset_vector(); 
+#ifdef DEBUG
 	registers.PC = 0xC000 ; 
+#else
+	registers.PC = bus->get_reset_vector(); 
+#endif
 }
 
 
