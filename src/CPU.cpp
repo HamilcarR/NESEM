@@ -201,8 +201,8 @@ uint8_t CPU::INDY(){
 	uint16_t ptr = 0x00FF & val ; 
 	uint8_t low = read(ptr & 0x00FF) ; 
 	uint8_t high = read((ptr + 1) & 0x00FF ) ; 
-	abs_addr = ((high << 8) | low) + registers.Y ; 
-	if( (abs_addr & 0xFF00) != (high << 8))
+	abs_addr = (((high & 0x00FF) << 8) | low) + registers.Y ; 
+	if( (abs_addr & 0xFF00) != ((high & 0x00FF) << 8))
 		return 1 ; 
 	else
 		return 0 ; 
@@ -631,8 +631,8 @@ uint8_t CPU::JSR() {
 	uint16_t rp = registers.PC - 1 ; 
 	uint8_t low = rp & 0x00FF ; 
 	uint8_t high = (rp & 0xFF00) >> 8 ; 
-	bus->write_stack(registers.SP-- , low) ; 
 	bus->write_stack(registers.SP-- , high) ; 
+	bus->write_stack(registers.SP-- , low) ; 
 	registers.PC = abs_addr ; 
 	return 0 ; 
 }
@@ -714,16 +714,14 @@ uint8_t CPU::PHP() {
 }
 
 uint8_t CPU::PLA() {
-	registers.SP++ ; 
-	registers.A = bus->read_stack(registers.SP); 
+	registers.A = bus->read_stack(++registers.SP); 
 	update_flag(Z , registers.A == 0x00);
 	update_flag(N , registers.A & 0x80); 
 	return 0 ; 
 }
 
 uint8_t CPU::PLP() {
-	registers.SP++;
-	registers.P = bus->read_stack(registers.SP);
+	registers.P = bus->read_stack(++registers.SP);
 	return 0 ; 
 }
 
@@ -732,17 +730,17 @@ uint8_t CPU::ROL() {
 	uint8_t old_carry = get_flag(C) ; 	 
 	if(opcodes_table[current_opcode].addressing_mode == &CPU::ACC){
 		uint8_t new_carry = registers.A & 0x80 ; 
-		update_flag(C , new_carry != 0x00) ; 
+		update_flag(C , new_carry) ; 
 		registers.A = (registers.A << 1) | old_carry ; 
 		update_flag(Z , registers.A == 0x00); 
 		update_flag(N , registers.A & 0x80); 
 	}
 	else{
 		uint8_t new_carry = data & 0x80 ; 
-		update_flag(C , new_carry != 0x00) ; 
+		update_flag(C , new_carry) ; 
 		uint8_t new_data = (data << 1) | old_carry ; 
-		update_flag(Z , new_data == 0x00); 
-		update_flag(N , new_data & 0x80) ; 
+		update_flag(N , new_data & 0x80) ;
+		bus->write(abs_addr , new_data); 
 	}
 	return 0 ; 
 }
@@ -753,17 +751,17 @@ uint8_t CPU::ROR() {
 	uint8_t old_carry = (get_flag(C) << 7) ;
 	if(opcodes_table[current_opcode].addressing_mode == &CPU::ACC){
 		uint8_t new_carry = registers.A & 0x01 ; 
-		update_flag(C , new_carry != 0x00); 
+		update_flag(C , new_carry ); 
 		registers.A = (registers.A >> 1) | old_carry ; 
 		update_flag(Z , registers.A == 0x00) ; 
 		update_flag(N , registers.A & 0x80) ; 
 	}
 	else{
 		uint8_t new_carry = data & 0x01 ; 
-		update_flag(C , new_carry != 0x00) ; 
+		update_flag(C , new_carry ) ; 
 		uint8_t new_data = (data >> 1) | old_carry ; 
-		update_flag(Z , new_data == 0x00) ; 
-		update_flag(N , new_data & 0x80) ; 
+		update_flag(N , new_data & 0x80) ;
+		bus->write(abs_addr , new_data) ; 
 	}
 	return 0 ; 
 }
@@ -772,8 +770,8 @@ uint8_t CPU::RTI() {
 	get();
 	registers.SP++ ; 
 	uint8_t flag = bus->read_stack(registers.SP++) ;
-	uint8_t PCH = bus->read_stack(registers.SP++) ; 
-	uint8_t PCL =  bus->read_stack(registers.SP) ; 
+	uint8_t PCL = bus->read_stack(registers.SP++) ; 
+	uint8_t PCH =  bus->read_stack(registers.SP) ; 
 	registers.P = flag ; 
 	uint16_t PC = PCH ;
 	PC = (PC << 8) | PCL ; 
@@ -786,8 +784,8 @@ uint8_t CPU::RTI() {
 uint8_t CPU::RTS() {
 	get();
 	registers.SP++ ; 
-	uint8_t PCH = bus->read_stack(registers.SP++); 
-	uint8_t PCL = bus->read_stack(registers.SP); 
+	uint8_t PCL = bus->read_stack(registers.SP++); 
+	uint8_t PCH = bus->read_stack(registers.SP); 
 	uint16_t PC = (PCH & 0x00FF) << 8 | PCL ; 
 	registers.PC = PC + 1  ; 
 	return 0 ; 
