@@ -1,10 +1,10 @@
 
 CXX=g++
-CXXFLAGS=-g3 -std=c++17 -Wall -pedantic -pthread -Wno-switch
+CXXFLAGS=-g3 -std=c++17 -Wall -Wextra -pedantic -pthread -Wno-switch
 TEMPDIR=temp/
 BIN=Emu
 LIBS=-lpthread -lsfml-graphics -lsfml-window -lsfml-system 
-CPPFLAGS=-I/usr/include/ -I./includes -I/usr/include/SFML/
+CPPFLAGS= -DDEBUG -I/usr/include/ -I./includes -I/usr/include/SFML/ 
 SRC=$(wildcard src/*.cpp)
 OBJ=$(SRC:%.cpp=%.o) 
 

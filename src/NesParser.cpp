@@ -134,3 +134,43 @@ std::vector<uint8_t> data(const char* file){
 
 
 }
+
+
+
+namespace BINARY {
+
+
+std::vector<uint8_t> data(const char* file){
+	std::ifstream input(file);
+	std::vector<uint8_t> dat ; 
+	if(input){
+	  uint8_t value ;
+	  while(input >> value)
+		dat.push_back(value);
+	
+	  return dat ;
+	}
+	else{
+		std::cerr << file << " not found" ; 
+		return dat ;
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+

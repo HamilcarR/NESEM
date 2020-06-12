@@ -11,6 +11,7 @@ while IFS= read -r line;do
 	neslognum=$(echo $neslogline | awk -F ' ' '{print $1}') ; 
 	neslogopcode="0x$(echo $neslogline | awk -F ' ' '{print $3}')" ; 
 	echo "$neslogline" ;	
+	
 	if [ $num != $neslognum ] || [ $opcode != $neslogopcode ]
 	then 
 

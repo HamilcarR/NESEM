@@ -9,12 +9,19 @@ using namespace std;
 
 
 int main(int argc , char** argv){
-	
-//	NESPARSER::NESROM rom = NESPARSER::data(argv[1]);	
-	auto assembly = ASSEMBLY::data(argv[1]); 
+
+#ifdef DEBUG
+	std::ofstream out("emu.log" , std::ios::trunc); 
+	out.close();
+#endif
+
+
+	auto rom = NESPARSER::data(argv[1]).rom_data;	
+//	auto rom = ASSEMBLY::data(argv[1]); 
+//	auto rom = BINARY::data(argv[1]); 
 	Window window = Window();
 	BUS bus= BUS();
-	bus.init_rom(assembly) ; 
+	bus.init_rom(rom , 0xC000) ; 
 	CPU cpu=CPU(&bus) ;
 	CPUDEBUG debug = CPUDEBUG(&cpu , &window);
 	debug.loop() ; 

@@ -7,7 +7,7 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +91 includes/CPU.h
+badd +1 includes/CPU.h
 badd +1 src/CPU.cpp
 badd +1 includes/Bus.h
 badd +1 src/Bus.cpp
@@ -18,7 +18,9 @@ badd +1 includes/Debug.h
 badd +1 src/Debug.cpp
 badd +1 src/GUI.cpp
 badd +1 includes/GUI.h
-badd +0 assembly.asm
+badd +1 assembly.asm
+badd +0 includes/Constants.h
+badd +0 src/Constants.cpp
 argglobal
 %argdel
 $argadd includes/CPU.h
@@ -40,11 +42,11 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe '1resize ' . ((&lines * 34 + 35) / 70)
-exe 'vert 1resize ' . ((&columns * 120 + 120) / 241)
-exe '2resize ' . ((&lines * 32 + 35) / 70)
-exe 'vert 2resize ' . ((&columns * 120 + 120) / 241)
-exe 'vert 3resize ' . ((&columns * 120 + 120) / 241)
+exe '1resize ' . ((&lines * 35 + 37) / 74)
+exe 'vert 1resize ' . ((&columns * 137 + 138) / 276)
+exe '2resize ' . ((&lines * 35 + 37) / 74)
+exe 'vert 2resize ' . ((&columns * 137 + 138) / 276)
+exe 'vert 3resize ' . ((&columns * 138 + 138) / 276)
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -55,12 +57,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 116 - ((28 * winheight(0) + 17) / 34)
+let s:l = 110 - ((23 * winheight(0) + 17) / 35)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-116
-normal! 015|
+110
+normal! 0
 wincmd w
 argglobal
 if bufexists("includes/CPU.h") | buffer includes/CPU.h | else | edit includes/CPU.h | endif
@@ -73,11 +75,11 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 145 - ((0 * winheight(0) + 16) / 32)
+let s:l = 152 - ((6 * winheight(0) + 17) / 35)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-145
+152
 normal! 0
 wincmd w
 argglobal
@@ -91,18 +93,18 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 130 - ((66 * winheight(0) + 33) / 67)
+let s:l = 205 - ((41 * winheight(0) + 35) / 71)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-130
-normal! 017|
+205
+normal! 058|
 wincmd w
-exe '1resize ' . ((&lines * 34 + 35) / 70)
-exe 'vert 1resize ' . ((&columns * 120 + 120) / 241)
-exe '2resize ' . ((&lines * 32 + 35) / 70)
-exe 'vert 2resize ' . ((&columns * 120 + 120) / 241)
-exe 'vert 3resize ' . ((&columns * 120 + 120) / 241)
+exe '1resize ' . ((&lines * 35 + 37) / 74)
+exe 'vert 1resize ' . ((&columns * 137 + 138) / 276)
+exe '2resize ' . ((&lines * 35 + 37) / 74)
+exe 'vert 2resize ' . ((&columns * 137 + 138) / 276)
+exe 'vert 3resize ' . ((&columns * 138 + 138) / 276)
 tabedit includes/Debug.h
 set splitbelow splitright
 wincmd _ | wincmd |
@@ -116,8 +118,8 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe 'vert 1resize ' . ((&columns * 120 + 120) / 241)
-exe 'vert 2resize ' . ((&columns * 120 + 120) / 241)
+exe 'vert 1resize ' . ((&columns * 138 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 137 + 138) / 276)
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -128,12 +130,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 33) / 67)
+let s:l = 33 - ((32 * winheight(0) + 35) / 71)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
-normal! 0
+33
+normal! 038|
 wincmd w
 argglobal
 if bufexists("src/Debug.cpp") | buffer src/Debug.cpp | else | edit src/Debug.cpp | endif
@@ -146,15 +148,15 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 33) / 67)
+let s:l = 114 - ((63 * winheight(0) + 35) / 71)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
+114
 normal! 0
 wincmd w
-exe 'vert 1resize ' . ((&columns * 120 + 120) / 241)
-exe 'vert 2resize ' . ((&columns * 120 + 120) / 241)
+exe 'vert 1resize ' . ((&columns * 138 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 137 + 138) / 276)
 tabedit includes/GUI.h
 set splitbelow splitright
 wincmd _ | wincmd |
@@ -168,8 +170,8 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe 'vert 1resize ' . ((&columns * 120 + 120) / 241)
-exe 'vert 2resize ' . ((&columns * 120 + 120) / 241)
+exe 'vert 1resize ' . ((&columns * 138 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 137 + 138) / 276)
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -180,12 +182,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 11 - ((10 * winheight(0) + 33) / 67)
+let s:l = 36 - ((35 * winheight(0) + 35) / 71)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-11
-normal! 0
+36
+normal! 09|
 wincmd w
 argglobal
 if bufexists("src/GUI.cpp") | buffer src/GUI.cpp | else | edit src/GUI.cpp | endif
@@ -198,15 +200,15 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 77 - ((8 * winheight(0) + 33) / 67)
+let s:l = 82 - ((25 * winheight(0) + 35) / 71)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-77
-normal! 016|
+82
+normal! 033|
 wincmd w
-exe 'vert 1resize ' . ((&columns * 120 + 120) / 241)
-exe 'vert 2resize ' . ((&columns * 120 + 120) / 241)
+exe 'vert 1resize ' . ((&columns * 138 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 137 + 138) / 276)
 tabedit src/main.cpp
 set splitbelow splitright
 wincmd _ | wincmd |
@@ -220,8 +222,8 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe 'vert 1resize ' . ((&columns * 120 + 120) / 241)
-exe 'vert 2resize ' . ((&columns * 120 + 120) / 241)
+exe 'vert 1resize ' . ((&columns * 120 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 155 + 138) / 276)
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -232,12 +234,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 16 - ((15 * winheight(0) + 33) / 67)
+let s:l = 21 - ((20 * winheight(0) + 35) / 71)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-16
-normal! 023|
+21
+normal! 08|
 wincmd w
 argglobal
 if bufexists("assembly.asm") | buffer assembly.asm | else | edit assembly.asm | endif
@@ -250,16 +252,15 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 33) / 67)
+let s:l = 2 - ((1 * winheight(0) + 35) / 71)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
-normal! 024|
+2
+normal! 0
 wincmd w
-2wincmd w
-exe 'vert 1resize ' . ((&columns * 120 + 120) / 241)
-exe 'vert 2resize ' . ((&columns * 120 + 120) / 241)
+exe 'vert 1resize ' . ((&columns * 120 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 155 + 138) / 276)
 tabedit includes/Bus.h
 set splitbelow splitright
 wincmd _ | wincmd |
@@ -273,8 +274,8 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe 'vert 1resize ' . ((&columns * 119 + 120) / 241)
-exe 'vert 2resize ' . ((&columns * 121 + 120) / 241)
+exe 'vert 1resize ' . ((&columns * 136 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 139 + 138) / 276)
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -285,11 +286,11 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 33 - ((32 * winheight(0) + 33) / 67)
+let s:l = 29 - ((28 * winheight(0) + 35) / 71)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-33
+29
 normal! 0
 wincmd w
 argglobal
@@ -303,15 +304,67 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 75 - ((64 * winheight(0) + 33) / 67)
+let s:l = 46 - ((45 * winheight(0) + 35) / 71)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-75
-normal! 018|
+46
+normal! 0
 wincmd w
-exe 'vert 1resize ' . ((&columns * 119 + 120) / 241)
-exe 'vert 2resize ' . ((&columns * 121 + 120) / 241)
+exe 'vert 1resize ' . ((&columns * 136 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 139 + 138) / 276)
+tabedit includes/Constants.h
+set splitbelow splitright
+wincmd _ | wincmd |
+vsplit
+1wincmd h
+wincmd w
+set nosplitbelow
+set nosplitright
+wincmd t
+set winminheight=0
+set winheight=1
+set winminwidth=0
+set winwidth=1
+exe 'vert 1resize ' . ((&columns * 137 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 138 + 138) / 276)
+argglobal
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=0
+setlocal fml=1
+setlocal fdn=20
+setlocal fen
+silent! normal! zE
+let s:l = 1 - ((0 * winheight(0) + 35) / 71)
+if s:l < 1 | let s:l = 1 | endif
+exe s:l
+normal! zt
+1
+normal! 0
+wincmd w
+argglobal
+if bufexists("src/Constants.cpp") | buffer src/Constants.cpp | else | edit src/Constants.cpp | endif
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=0
+setlocal fml=1
+setlocal fdn=20
+setlocal fen
+silent! normal! zE
+let s:l = 2 - ((1 * winheight(0) + 35) / 71)
+if s:l < 1 | let s:l = 1 | endif
+exe s:l
+normal! zt
+2
+normal! 0
+wincmd w
+exe 'vert 1resize ' . ((&columns * 137 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 138 + 138) / 276)
 tabedit includes/RAM.h
 set splitbelow splitright
 wincmd _ | wincmd |
@@ -325,8 +378,8 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe 'vert 1resize ' . ((&columns * 119 + 120) / 241)
-exe 'vert 2resize ' . ((&columns * 121 + 120) / 241)
+exe 'vert 1resize ' . ((&columns * 136 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 139 + 138) / 276)
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -337,7 +390,7 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 33) / 67)
+let s:l = 1 - ((0 * winheight(0) + 35) / 71)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -355,16 +408,16 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 2 - ((1 * winheight(0) + 33) / 67)
+let s:l = 2 - ((1 * winheight(0) + 35) / 71)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 2
 normal! 0
 wincmd w
-exe 'vert 1resize ' . ((&columns * 119 + 120) / 241)
-exe 'vert 2resize ' . ((&columns * 121 + 120) / 241)
-tabnext 4
+exe 'vert 1resize ' . ((&columns * 136 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 139 + 138) / 276)
+tabnext 6
 set stal=1
 if exists('s:wipebuf') && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

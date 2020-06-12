@@ -32,14 +32,16 @@ std::string CPUDEBUG::print_registers() const {
 }
 
 std::string CPUDEBUG::current_instruction() const {
-	std::ostringstream oss(std::ostringstream::out); 
+	std::ostringstream oss(std::ostringstream::out); 	
+
 	const CPU::INSTRUCTION instruction = cpu->opcodes_table[cpu->current_opcode] ; 	
 	oss << "INSTRUCTION--------------" << "\n"; 
 	oss << "Op: " << instruction.mnemonic << "  " << format(instruction.opcode) << "\n" ; 
-	oss << "Data: " << format(cpu->data) << "\n" ; 
+	oss << "Data: " << format(cpu->data) << " count:" << (int) cpu->instruction_count << "\n" ; 
 	oss << "Address absolute: " << format(cpu->abs_addr) << "\n" ;
 	oss << "Address relative: " << format(cpu->rel_addr) << std::endl; 
 	return oss.str();
+
 
 
 }
@@ -57,7 +59,7 @@ std::string CPUDEBUG::print_zeropage() const{
 			break;
 		addr = i ; 
 		oss << format(addr) << ":     " ; 
-		for(uint8_t j = 0 ; j < 0x0F ; j++){
+		for(uint8_t j = 0 ; j <= 0x0F ; j++){
 			uint8_t z = i | j ; 
 			value = cpu->getBus()->read(addr | (z & 0x00FF)) ; 
 			oss << format(value) << "   " ; 
@@ -103,6 +105,14 @@ std::string CPUDEBUG::print_memory(uint8_t mempage) const {
 
 }
 
+
+
+void CPUDEBUG::write_log() const {
+
+
+
+
+}
 
 
 

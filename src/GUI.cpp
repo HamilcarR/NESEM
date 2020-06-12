@@ -25,10 +25,6 @@ void Window::initScreen(){
 
 
 
-
-
-
-
 void Window::process(sf::Keyboard::Key key , const Debug *debug){
 using a = sf::Keyboard::Key ;
 
@@ -46,6 +42,14 @@ using a = sf::Keyboard::Key ;
 			case a::Subtract :
 				memory_page--;
 			break ; 
+			
+			case a::S : 
+				memory_page = BUS::STACK::BEGIN >> 8 ; 
+			break ; 
+
+			case a::N :
+				instruction_count += 100 ; 
+			break;
 
 			case a::Escape : 
 				close();
@@ -72,11 +76,16 @@ void Window::loop(const Debug *debug){
 
 	const CPUDEBUG *cdebug = static_cast<const CPUDEBUG*>(debug) ; 
 	std::ostringstream oss(std::ostringstream::out) ; 
+	instruction_count = 0 ; 
 	while(isOpen()){
+		for(int i = 0 ; i < instruction_count ; i++)	
+				static_cast<const CPUDEBUG*>(debug)->cpu->clock() ; 
+
 		while(static_cast<const CPUDEBUG*>(debug)->cpu->ticks > 0) 
-		static_cast<const CPUDEBUG*>(debug)->cpu->clock(); 
+			static_cast<const CPUDEBUG*>(debug)->cpu->clock(); 
 
 
+		instruction_count = 0 ; 
 		clear();
 		sf::Event event ; 
 		while(pollEvent(event)){
@@ -111,7 +120,7 @@ void Window::loop(const Debug *debug){
 		setText(oss.str() , screen.current_instruction);
 		oss.str(std::string());
 		draw(text);	
-
+		
 		display();
 
 	}

@@ -59,11 +59,11 @@ private:
 	sf::Font font ; 		
 	sf::Text text ;
 	SCREENDIV screen ;
-
+	
 	uint8_t memory_page ; 
 	int width ; 
 	int height ;
-
+	int instruction_count ; 
 
 	
 };

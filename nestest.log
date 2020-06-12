@@ -239,7 +239,7 @@
    239	C94B  38        SEC                             A:6B X:00 Y:00 P:27 SP:FB PPU: 11,  5 CYC:579
    240	C94C  B8        CLV                             A:6B X:00 Y:00 P:27 SP:FB PPU: 17,  5 CYC:581
    241	C94D  A9 7F     LDA #$7F                        A:6B X:00 Y:00 P:27 SP:FB PPU: 23,  5 CYC:583
-   242	C94F  69 7F     ADC #$7F                        A:7F X:00 Y:00 P:25 SP:FB PPU: 29,  5 CYC:585
+   242	C94F  69 7F     ADC #$7F                        A:7F X:00 Y:00 P:25 SP:FB PPU: 29,  5 CYC:585 //here
    243	C951  10 0B     BPL $C95E                       A:FF X:00 Y:00 P:E4 SP:FB PPU: 35,  5 CYC:587
    244	C953  B0 09     BCS $C95E                       A:FF X:00 Y:00 P:E4 SP:FB PPU: 41,  5 CYC:589
    245	C955  C9 FF     CMP #$FF                        A:FF X:00 Y:00 P:E4 SP:FB PPU: 47,  5 CYC:591
@@ -498,7 +498,7 @@
    498	CBB6  20 37 F9  JSR $F937                       A:00 X:AA Y:71 P:27 SP:FB PPU:  1, 10 CYC:1144
    499	F937  30 0B     BMI $F944                       A:00 X:AA Y:71 P:27 SP:F9 PPU: 19, 10 CYC:1150
    500	F939  90 09     BCC $F944                       A:00 X:AA Y:71 P:27 SP:F9 PPU: 25, 10 CYC:1152
-   501	F93B  D0 07     BNE $F944                       A:00 X:AA Y:71 P:27 SP:F9 PPU: 31, 10 CYC:1154
+   501	F93B  D0 07     BNE $F944                       A:00 X:AA Y:71 P:27 SP:F9 PPU: 31, 10 CYC:1154 //here
    502	F93D  70 05     BVS $F944                       A:00 X:AA Y:71 P:27 SP:F9 PPU: 37, 10 CYC:1156
    503	F93F  C9 00     CMP #$00                        A:00 X:AA Y:71 P:27 SP:F9 PPU: 43, 10 CYC:1158
    504	F941  D0 01     BNE $F944                       A:00 X:AA Y:71 P:27 SP:F9 PPU: 49, 10 CYC:1160
