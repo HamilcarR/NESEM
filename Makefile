@@ -18,6 +18,7 @@ all: $(OBJ)
 
 clean:
 	rm -f *.o
+	rm -f emu.log
 	rm -f src/*.o
 	rm $(BIN) 
 

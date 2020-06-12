@@ -140,16 +140,15 @@ uint8_t CPU::ABSY(){
 
 
 uint8_t CPU::IND(){
-	uint8_t low = read(registers.PC); 
-	registers.PC++;
-	uint8_t high = read(registers.PC); 
-	registers.PC++;
+	uint8_t low = read(registers.PC++); 
+	uint8_t high = read(registers.PC++); 
 	uint16_t val= (high << 8) | low ;
 
-	/*jmp bug :
-	 * http://nesdev.com/6502bugs.txt */
+	/*Hardware bug : 
+	 * if the low byte of the address is FF , IND JMP  will wrap around and fetch the high byte of the address at 00 of the
+	 * same page instead the next page */
 
-	if(val == 0x00FF)
+	if(low == 0x00FF)
 		abs_addr = (read(val & 0xFF00) << 8) | read(val) ; 
 	else
 		abs_addr = (read(val + 1 ) << 8) | read(val) ; 
@@ -1178,7 +1177,7 @@ void CPU::fill_table(){
 /*************************     0xD0     *************************/	
 
 		{"BNE" ,0xD0 , &CPU::REL , &CPU::BNE , 2 , 2 , 3} , 
-		{"CMP" ,0xD1 , &CPU::INDX , &CPU::CMP , 2 , 5 , 1} , 
+		{"CMP" ,0xD1 , &CPU::INDY , &CPU::CMP , 2 , 5 , 1} , 
 		{"???" ,0xD2 , &CPU::IMP , &CPU::ILL , 1 , 2 , 0} , 
 		{"???" ,0xD3 , &CPU::INDY , &CPU::ILL , 2 , 8 , 0} , 
 		{"???" ,0xD4 , &CPU::ZPX , &CPU::ILL , 2 , 4 , 0} , 
