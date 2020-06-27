@@ -19,8 +19,10 @@ badd +1 src/Debug.cpp
 badd +1 src/GUI.cpp
 badd +1 includes/GUI.h
 badd +1 assembly.asm
-badd +0 includes/Constants.h
-badd +0 src/Constants.cpp
+badd +1 includes/Constants.h
+badd +1 src/Constants.cpp
+badd +0 src/PPU.cpp
+badd +0 includes/PPU.h
 argglobal
 %argdel
 $argadd includes/CPU.h
@@ -57,11 +59,11 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 110 - ((23 * winheight(0) + 17) / 35)
+let s:l = 111 - ((24 * winheight(0) + 17) / 35)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-110
+111
 normal! 0
 wincmd w
 argglobal
@@ -75,11 +77,11 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 152 - ((6 * winheight(0) + 17) / 35)
+let s:l = 150 - ((4 * winheight(0) + 17) / 35)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-152
+150
 normal! 0
 wincmd w
 argglobal
@@ -93,18 +95,70 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 205 - ((41 * winheight(0) + 35) / 71)
+let s:l = 1173 - ((10 * winheight(0) + 35) / 71)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-205
-normal! 058|
+1173
+normal! 017|
 wincmd w
 exe '1resize ' . ((&lines * 35 + 37) / 74)
 exe 'vert 1resize ' . ((&columns * 137 + 138) / 276)
 exe '2resize ' . ((&lines * 35 + 37) / 74)
 exe 'vert 2resize ' . ((&columns * 137 + 138) / 276)
 exe 'vert 3resize ' . ((&columns * 138 + 138) / 276)
+tabedit includes/PPU.h
+set splitbelow splitright
+wincmd _ | wincmd |
+vsplit
+1wincmd h
+wincmd w
+set nosplitbelow
+set nosplitright
+wincmd t
+set winminheight=0
+set winheight=1
+set winminwidth=0
+set winwidth=1
+exe 'vert 1resize ' . ((&columns * 138 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 137 + 138) / 276)
+argglobal
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=0
+setlocal fml=1
+setlocal fdn=20
+setlocal fen
+silent! normal! zE
+let s:l = 1 - ((0 * winheight(0) + 35) / 71)
+if s:l < 1 | let s:l = 1 | endif
+exe s:l
+normal! zt
+1
+normal! 0
+wincmd w
+argglobal
+if bufexists("src/PPU.cpp") | buffer src/PPU.cpp | else | edit src/PPU.cpp | endif
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=0
+setlocal fml=1
+setlocal fdn=20
+setlocal fen
+silent! normal! zE
+let s:l = 1 - ((0 * winheight(0) + 35) / 71)
+if s:l < 1 | let s:l = 1 | endif
+exe s:l
+normal! zt
+1
+normal! 0
+wincmd w
+exe 'vert 1resize ' . ((&columns * 138 + 138) / 276)
+exe 'vert 2resize ' . ((&columns * 137 + 138) / 276)
 tabedit includes/Debug.h
 set splitbelow splitright
 wincmd _ | wincmd |
@@ -286,12 +340,12 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 29 - ((28 * winheight(0) + 35) / 71)
+let s:l = 232 - ((29 * winheight(0) + 35) / 71)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-29
-normal! 0
+232
+normal! 024|
 wincmd w
 argglobal
 if bufexists("src/Bus.cpp") | buffer src/Bus.cpp | else | edit src/Bus.cpp | endif
@@ -417,7 +471,7 @@ normal! 0
 wincmd w
 exe 'vert 1resize ' . ((&columns * 136 + 138) / 276)
 exe 'vert 2resize ' . ((&columns * 139 + 138) / 276)
-tabnext 6
+tabnext 2
 set stal=1
 if exists('s:wipebuf') && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

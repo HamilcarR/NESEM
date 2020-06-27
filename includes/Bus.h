@@ -123,7 +123,7 @@ struct PPUREG{
 	 *			+				+ V
 	 *
 	 *
-	 * NhNl : Nametable select ( 0x00 = $2000 , 0x01 = $2400 , 0x10 = $2800 , 0x11 = $2C00 )
+	 * NhNl : Nametable select ( 00 = $2000 , 01 = $2400 , 10 = $2800 , 11 = $2C00 )
 	 *			(Nh : 1 = add 240 to Y scroll position , Nl : 1 = add 256 to X scroll position)
 	 *
 	 *			+-----------------+--------------+

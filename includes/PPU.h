@@ -20,35 +20,25 @@ class PPU {
 
 public:
 
-enum PPUCTRL {
-	NL = (1 << 0) , //Base nametable address Low and High 
-	NH = (1 << 1) , // 0 = $2000 , 1 = $2400 , 2 = $2800 , 3 = $2C00 
-	I  = (1 << 2) , //Vram address increment per CPU read/write of PPUDATA , 0 = add 1  , 1 = add 32
-	S  = (1 << 3) , //Sprite pattern table address for 8x8 sprites
-	B  = (1 << 4) , //Background pattern table addr 
-	H  = (1 << 5) , //Sprite size
-	P  = (1 << 6) , //PPU master/slave select
-	V  = (1 << 7)   //NMI generate , Vblank 
+
+
+//all the PPU registers
+struct Registers {
+	uint8_t PPUCTRL ; //$2000 
+	uint8_t PPUMASK ; //$2001
+	uint8_t PPUSTATUS ; //$2002
+	uint8_t OAMADDR ; //$2003
+	uint8_t OAMDATA ; //$2004
+	uint8_t PPUSCROLL ; //$2005
+	uint8_t PPUADDR ; //$2006
+	uint8_t PPUDATA ; //$2007
+	uint8_t OAMDMA ; //$2008
+
+
+
+
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -64,15 +54,30 @@ enum PPUCTRL {
 
 	virtual ~ PPU(){} 
 
+	
 
+	void clock(); 
+	bool in_vblank() const {return vertical_blank ; }
+	uint8_t readPPUCTRL() const ; 
+	uint8_t writePPUCTRL(uint8_t) ;
+	auto get_X_coord(){ return (uint16_t) ( ticks / 341 - 21 ) ; } 
+	auto get_Y_coord(){ return (uint16_t) (ticks % 341 ) ; } 
+	void enableV(){vertical_blank = true ; } 
+	void disableV(){vertical_blank = false ; } 
+	void step_address(); // use this function to increment address
 
+	/*useful variables*/
 
-	uint16_t address ; 
+	uint16_t address ; //address on the PPU bus 
+	bool vertical_blank ; 
+	uint16_t ticks ; // need 341 for a scanline  
+	uint16_t scanline ;  // X coord
+	uint16_t offset_pixel ; // Y coord 
 private:
 	
 	BUS *cpu_bus ; 
 	PPUBUS *ppu_bus ; 
-
+	Registers registers ; 
 
 
 
